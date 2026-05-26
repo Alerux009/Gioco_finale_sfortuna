@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { SafeAreaView, View, Text, TouchableOpacity } from 'react-native';
+import { SafeAreaView, View, Text, TouchableOpacity, ScrollView } from 'react-native';
 
 export default function App() {
   const [schermata, setSchermata] = useState('home');
