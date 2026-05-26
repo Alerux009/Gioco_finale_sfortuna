@@ -374,3 +374,11 @@ const CARTE = [
     desc: "Titolo in tasca all'ultima curva, un rivale lo tampona: titolo a un terzo pilota.",
   },
 ];
+
+function prendiCarte(idUsati, quante) {
+  const disponibili = CARTE.filter((c) => !idUsati.includes(c.id));
+
+  const mescolate = disponibili.sort(() => Math.random() - 0.5);
+
+  return mescolate.slice(0, quante);
+}
