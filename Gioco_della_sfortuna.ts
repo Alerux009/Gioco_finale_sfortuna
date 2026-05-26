@@ -8,12 +8,22 @@ export default function App() {
     return (
       <SafeAreaView style={{ flex: 1, justifyContent: 'center', padding: 20 }}>
         <Text>Gioco della Sfortuna</Text>
-
         <TouchableOpacity onPress={() => setSchermata('gioco')}>
           <Text>Inizia</Text>
         </TouchableOpacity>
       </SafeAreaView>
     );
+  }
+
+  function inizia() {
+    const start = prendiCarte([], 3);
+    const arrayid = start.map((c) => c.id);
+    const [nuova] = prendiCarte(arrayid, 1);
+    setMano(start.sort((a, b) => a.sfiga - b.sfiga));
+    setIdUsati([...arrayid, nuova.id]);
+    setCartaCorrente(nuova);
+    setErrori(0);
+    setSchermata('gioco');
   }
 
   return (
