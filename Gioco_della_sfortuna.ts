@@ -27,8 +27,44 @@ export default function App() {
   }
 
   return (
-    <SafeAreaView>
-      <Text>Gioco</Text>
+    <SafeAreaView style={{ flex: 1 }}>
+      <View
+        style={{
+          padding: 20,
+        }}>
+        <Text
+          style={{
+            fontSize: 20,
+            fontWeight: 'bold',
+          }}>
+          Carte: {mano.length}
+        </Text>
+
+        <Text>Errori: {errori}</Text>
+      </View>
+
+      {cartaCorrente && (
+        <View
+          style={{
+            padding: 20,
+          }}>
+          <Text
+            style={{
+              fontSize: 50,
+            }}>
+            {cartaCorrente.emoji}
+          </Text>
+
+          <Text
+            style={{
+              fontSize: 22,
+              fontWeight: 'bold',
+            }}>
+            {cartaCorrente.nome}
+          </Text>
+          <Text>Sfiga: ???</Text>
+        </View>
+      )}
     </SafeAreaView>
   );
 }
