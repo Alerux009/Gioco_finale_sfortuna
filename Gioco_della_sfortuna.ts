@@ -8,6 +8,7 @@ export default function App() {
   const [errori, setErrori] = useState(0);
   const [cartaCorrente, setCartaCorrente] = useState(null);
   const [idUsati, setIdUsati] = useState([]);
+  const [posScelta, setPosScelta] = useState(null);
 
   function inizia() {
     const start = prendiCarte([], 3);
@@ -37,7 +38,7 @@ export default function App() {
         }}>
         <Text>Gioco della Sfortuna</Text>
 
-        <TouchableOpacity onPress={() => setSchermata('gioco')}>
+        <TouchableOpacity onPress={inizia}>
           <Text>Inizia</Text>
         </TouchableOpacity>
       </SafeAreaView>
@@ -76,6 +77,43 @@ export default function App() {
           </Text>
         </View>
       )}
+      {Array.from({
+        length: mano.length + 1,
+      }).map((_, i) => (
+        <View key={i}>
+          <TouchableOpacity
+            onPress={() => setPosScelta(i)}
+            style={{
+              alignItems: 'center',
+              margin: 10,
+            }}>
+            <View
+              style={{
+                width: posScelta === i ? 80 : 40,
+
+                height: 4,
+
+                backgroundColor: posScelta === i ? 'red' : 'gray',
+              }}
+            />
+          </TouchableOpacity>
+
+          {i < mano.length && (
+            <View
+              style={{
+                padding: 10,
+                margin: 10,
+                borderWidth: 1,
+              }}>
+              <Text>
+                {mano[i].emoji} {mano[i].nome}
+              </Text>
+
+              <Text>{mano[i].sfiga}</Text>
+            </View>
+          )}
+        </View>
+      ))}
     </SafeAreaView>
   );
 }
