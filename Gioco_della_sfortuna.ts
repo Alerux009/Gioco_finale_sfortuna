@@ -11,19 +11,15 @@ export default function App() {
 
   function inizia() {
     const start = prendiCarte([], 3);
+    const ids = start.map((c) => c.id);
 
-    const arrayid = start.map((c) => c.id);
-
-    const [nuova] = prendiCarte(arrayid, 1);
+    const [nuova] = prendiCarte(ids, 1);
 
     setMano(start.sort((a, b) => a.sfiga - b.sfiga));
-
-    setIdUsati([...arrayid, nuova.id]);
-
+    setIdUsati([...ids, nuova.id]);
     setCartaCorrente(nuova);
-
     setErrori(0);
-
+    setPosScelta(null);
     setSchermata('gioco');
   }
 
