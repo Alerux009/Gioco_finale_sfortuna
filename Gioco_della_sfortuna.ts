@@ -469,3 +469,26 @@ const CARTE = [
     desc: "Titolo in tasca all'ultima curva, un rivale lo tampona: titolo a un terzo pilota.",
   },
 ];
+
+function prendiCarte(idUsati, quante) {
+  const disponibili = CARTE.filter((c) => !idUsati.includes(c.id));
+
+  const mescolate = disponibili.sort(() => Math.random() - 0.5);
+
+  return mescolate.slice(0, quante);
+}
+
+function posizioneCorretta(mano, cartaNuova, posizione) {
+  const nuova = [...mano];
+
+  nuova.splice(posizione, 0, cartaNuova);
+
+  const i = nuova.indexOf(cartaNuova);
+
+  const primaOk = i === 0 || nuova[i - 1].sfiga < cartaNuova.sfiga;
+
+  const dopoOk =
+    i === nuova.length - 1 || nuova[i + 1].sfiga > cartaNuova.sfiga;
+
+  return primaOk && dopoOk;
+}
