@@ -1,13 +1,42 @@
 import React, { useState } from 'react';
-import { SafeAreaView, View, Text, TouchableOpacity, ScrollView } from 'react-native';
+
+import { SafeAreaView, View, Text, TouchableOpacity } from 'react-native';
 
 export default function App() {
   const [schermata, setSchermata] = useState('home');
+  const [mano, setMano] = useState([]);
+  const [errori, setErrori] = useState(0);
+  const [cartaCorrente, setCartaCorrente] = useState(null);
+  const [idUsati, setIdUsati] = useState([]);
+
+  function inizia() {
+    const start = prendiCarte([], 3);
+
+    const arrayid = start.map((c) => c.id);
+
+    const [nuova] = prendiCarte(arrayid, 1);
+
+    setMano(start.sort((a, b) => a.sfiga - b.sfiga));
+
+    setIdUsati([...arrayid, nuova.id]);
+
+    setCartaCorrente(nuova);
+
+    setErrori(0);
+
+    setSchermata('gioco');
+  }
 
   if (schermata === 'home') {
     return (
-      <SafeAreaView style={{ flex: 1, justifyContent: 'center', padding: 20 }}>
+      <SafeAreaView
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          padding: 20,
+        }}>
         <Text>Gioco della Sfortuna</Text>
+
         <TouchableOpacity onPress={() => setSchermata('gioco')}>
           <Text>Inizia</Text>
         </TouchableOpacity>
@@ -15,33 +44,16 @@ export default function App() {
     );
   }
 
-  function inizia() {
-    const start = prendiCarte([], 3);
-    const arrayid = start.map((c) => c.id);
-    const [nuova] = prendiCarte(arrayid, 1);
-    setMano(start.sort((a, b) => a.sfiga - b.sfiga));
-    setIdUsati([...arrayid, nuova.id]);
-    setCartaCorrente(nuova);
-    setErrori(0);
-    setSchermata('gioco');
-  }
-
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <View
-        style={{
-          padding: 20,
-        }}>
-        <Text
-          style={{
-            fontSize: 20,
-            fontWeight: 'bold',
-          }}>
-          Carte: {mano.length}
-        </Text>
+    <SafeAreaView
+      style={{
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}>
+      <Text>Carte: {mano.length}</Text>
 
-        <Text>Errori: {errori}</Text>
-      </View>
+      <Text>Errori: {errori}</Text>
 
       {cartaCorrente && (
         <View
@@ -57,12 +69,11 @@ export default function App() {
 
           <Text
             style={{
-              fontSize: 22,
+              fontSize: 20,
               fontWeight: 'bold',
             }}>
             {cartaCorrente.nome}
           </Text>
-          <Text>Sfiga: ???</Text>
         </View>
       )}
     </SafeAreaView>
@@ -420,11 +431,3 @@ const CARTE = [
     desc: "Titolo in tasca all'ultima curva, un rivale lo tampona: titolo a un terzo pilota.",
   },
 ];
-
-function prendiCarte(idUsati, quante) {
-  const disponibili = CARTE.filter((c) => !idUsati.includes(c.id));
-
-  const mescolate = disponibili.sort(() => Math.random() - 0.5);
-
-  return mescolate.slice(0, quante);
-}
