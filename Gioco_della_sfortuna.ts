@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-
 import { SafeAreaView, View, Text, TouchableOpacity } from 'react-native';
 
 export default function App() {
@@ -28,6 +27,34 @@ export default function App() {
     setSchermata('gioco');
   }
 
+  function conferma() {
+    const ok =
+      posScelta !== null && posizioneCorretta(mano, cartaCorrente, posScelta);
+
+    if (ok) {
+      const nuovaMano = [...mano, cartaCorrente].sort(
+        (a, b) => a.sfiga - b.sfiga
+      );
+
+      setMano(nuovaMano);
+      const [nuova] = prendiCarte(idUsati, 1);
+
+      if (nuova) {
+        setCartaCorrente(nuova);
+        setPosScelta(null);
+
+        setIdUsati([...idUsati, nuova.id]);
+      }
+    } else {
+      const nuoviErrori = errori + 1;
+      setErrori(nuoviErrori);
+
+      if (nuoviErrori >= 3) {
+        setSchermata('fine');
+      }
+    }
+  }
+
   if (schermata === 'home') {
     return (
       <SafeAreaView
@@ -45,78 +72,60 @@ export default function App() {
     );
   }
 
-  return (
-    <SafeAreaView
-      style={{
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-      }}>
-      <Text>Carte: {mano.length}</Text>
+  if (schermata === 'gioco') {
+    return (
+      <SafeAreaView style={{ flex: 1 }}>
+        <View style={{ padding: 20 }}>
+          <Text style={{ fontSize: 20, fontWeight: 'bold' }}>
+            Carte: {mano.length}
+          </Text>
 
-      <Text>Errori: {errori}</Text>
+          <Text>Errori: {errori}</Text>
+        </View>
 
-      {cartaCorrente && (
-        <View
+        {cartaCorrente && (
+          <View style={{ padding: 20 }}>
+            <Text style={{ fontSize: 50 }}>{cartaCorrente.emoji}</Text>
+
+            <Text style={{ fontSize: 22, fontWeight: 'bold' }}>
+              {cartaCorrente.nome}
+            </Text>
+
+            <Text>Sfiga: ???</Text>
+          </View>
+        )}
+
+        <TouchableOpacity
+          onPress={conferma}
           style={{
+            backgroundColor: 'black',
             padding: 20,
+            margin: 20,
           }}>
-          <Text
-            style={{
-              fontSize: 50,
-            }}>
-            {cartaCorrente.emoji}
-          </Text>
+          <Text style={{ color: 'white', textAlign: 'center' }}>Conferma</Text>
+        </TouchableOpacity>
+      </SafeAreaView>
+    );
+  }
 
-          <Text
-            style={{
-              fontSize: 20,
-              fontWeight: 'bold',
-            }}>
-            {cartaCorrente.nome}
-          </Text>
-        </View>
-      )}
-      {Array.from({
-        length: mano.length + 1,
-      }).map((_, i) => (
-        <View key={i}>
-          <TouchableOpacity
-            onPress={() => setPosScelta(i)}
-            style={{
-              alignItems: 'center',
-              margin: 10,
-            }}>
-            <View
-              style={{
-                width: posScelta === i ? 80 : 40,
+  if (schermata === 'fine') {
+    return (
+      <SafeAreaView
+        style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <Text style={{ fontSize: 30 }}>💀 Hai perso</Text>
 
-                height: 4,
+        <TouchableOpacity
+          onPress={() => setSchermata('home')}
+          style={{ marginTop: 20 }}>
+          <Text>Ricomincia</Text>
+        </TouchableOpacity>
+      </SafeAreaView>
+    );
+  }
 
-                backgroundColor: posScelta === i ? 'red' : 'gray',
-              }}
-            />
-          </TouchableOpacity>
-
-          {i < mano.length && (
-            <View
-              style={{
-                padding: 10,
-                margin: 10,
-                borderWidth: 1,
-              }}>
-              <Text>
-                {mano[i].emoji} {mano[i].nome}
-              </Text>
-
-              <Text>{mano[i].sfiga}</Text>
-            </View>
-          )}
-        </View>
-      ))}
-    </SafeAreaView>
-  );
+  return null;
 }
+
 const CARTE = [
   {
     id: '1',
@@ -472,21 +481,17 @@ const CARTE = [
 
 function prendiCarte(idUsati, quante) {
   const disponibili = CARTE.filter((c) => !idUsati.includes(c.id));
-
   const mescolate = disponibili.sort(() => Math.random() - 0.5);
-
   return mescolate.slice(0, quante);
 }
 
 function posizioneCorretta(mano, cartaNuova, posizione) {
   const nuova = [...mano];
-
   nuova.splice(posizione, 0, cartaNuova);
 
   const i = nuova.indexOf(cartaNuova);
 
   const primaOk = i === 0 || nuova[i - 1].sfiga < cartaNuova.sfiga;
-
   const dopoOk =
     i === nuova.length - 1 || nuova[i + 1].sfiga > cartaNuova.sfiga;
 
