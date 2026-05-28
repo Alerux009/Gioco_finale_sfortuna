@@ -8,6 +8,7 @@ export default function App() {
   const [cartaCorrente, setCartaCorrente] = useState(null);
   const [idUsati, setIdUsati] = useState([]);
   const [posScelta, setPosScelta] = useState(null);
+  const [mostraSfiga, setMostraSfiga] = useState(false);
 
   function inizia() {
     const start = prendiCarte([], 3);
@@ -21,6 +22,7 @@ export default function App() {
     setErrori(0);
     setPosScelta(null);
     setSchermata('gioco');
+    setMostraSfiga(false);
   }
 
   function conferma() {
@@ -45,9 +47,11 @@ export default function App() {
       }
     } else {
       const nuoviErrori = errori + 1;
+      setMostraSfiga(false);
       setErrori(nuoviErrori);
 
       alert(`Sbagliato!\n\nLa sfiga era ${cartaCorrente.sfiga}`);
+      setMostraSfiga(true);
 
       if (nuoviErrori >= 3) {
         setSchermata('fine');
@@ -63,10 +67,31 @@ export default function App() {
           justifyContent: 'center',
           padding: 20,
         }}>
-        <Text>Gioco della Sfortuna</Text>
+        <Text
+          style={{
+            fontSize: 32,
+            textAlign: 'center',
+            marginBottom: 30,
+            fontWeight: 'bold',
+          }}>
+          Gioco della Sfortuna
+        </Text>
 
-        <TouchableOpacity onPress={inizia}>
-          <Text>Inizia</Text>
+        <TouchableOpacity
+          onPress={inizia}
+          style={{
+            backgroundColor: 'black',
+            padding: 20,
+            borderRadius: 12,
+          }}>
+          <Text
+            style={{
+              color: 'white',
+              textAlign: 'center',
+              fontSize: 18,
+            }}>
+            Inizia
+          </Text>
         </TouchableOpacity>
       </SafeAreaView>
     );
@@ -74,7 +99,10 @@ export default function App() {
 
   if (schermata === 'gioco') {
     return (
-      <SafeAreaView style={{ flex: 1 }}>
+      <SafeAreaView
+        style={{
+          flex: 1,
+        }}>
         <View style={{ padding: 20 }}>
           <Text style={{ fontSize: 20, fontWeight: 'bold' }}>
             Carte: {mano.length}
@@ -91,7 +119,14 @@ export default function App() {
               {cartaCorrente.nome}
             </Text>
 
-            <Text>Sfiga: ???</Text>
+            <Text>Sfiga: {mostraSfiga ? cartaCorrente.sfiga : '???'}</Text>
+            <Text
+              style={{
+                marginTop: 10,
+                fontSize: 16,
+              }}>
+              {cartaCorrente.desc}
+            </Text>
           </View>
         )}
 
@@ -103,7 +138,7 @@ export default function App() {
               style={{
                 padding: 15,
                 marginBottom: 10,
-                backgroundColor: posScelta === index ? '#444' : '#222',
+                backgroundColor: posScelta === index ? 'black' : '#222',
                 borderRadius: 10,
               }}>
               <Text style={{ color: 'white', fontSize: 18 }}>
