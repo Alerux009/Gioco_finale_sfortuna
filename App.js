@@ -40,10 +40,14 @@ export default function App() {
         setPosScelta(null);
 
         setIdUsati([...idUsati, nuova.id]);
+      } else {
+        setSchermata('vittoria');
       }
     } else {
       const nuoviErrori = errori + 1;
       setErrori(nuoviErrori);
+
+      alert(`Sbagliato!\n\nLa sfiga era ${cartaCorrente.sfiga}`);
 
       if (nuoviErrori >= 3) {
         setSchermata('fine');
@@ -91,6 +95,46 @@ export default function App() {
           </View>
         )}
 
+        <View style={{ paddingHorizontal: 20 }}>
+          {mano.map((carta, index) => (
+            <TouchableOpacity
+              key={carta.id}
+              onPress={() => setPosScelta(index)}
+              style={{
+                padding: 15,
+                marginBottom: 10,
+                backgroundColor: posScelta === index ? '#444' : '#222',
+                borderRadius: 10,
+              }}>
+              <Text style={{ color: 'white', fontSize: 18 }}>
+                {carta.emoji} {carta.nome}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+
+        <TouchableOpacity
+          onPress={() => setPosScelta(mano.length)}
+          style={{
+            padding: 15,
+            marginHorizontal: 20,
+            backgroundColor: posScelta === mano.length ? '#444' : '#222',
+            borderRadius: 10,
+          }}>
+          <Text style={{ color: 'white', textAlign: 'center' }}>
+            Inserisci alla fine
+          </Text>
+        </TouchableOpacity>
+
+        <Text
+          style={{
+            textAlign: 'center',
+            marginTop: 20,
+            fontSize: 18,
+          }}>
+          Posizione scelta: {posScelta !== null ? posScelta + 1 : '-'}
+        </Text>
+
         <TouchableOpacity
           onPress={conferma}
           style={{
@@ -114,6 +158,25 @@ export default function App() {
           onPress={() => setSchermata('home')}
           style={{ marginTop: 20 }}>
           <Text>Ricomincia</Text>
+        </TouchableOpacity>
+      </SafeAreaView>
+    );
+  }
+
+  if (schermata === 'vittoria') {
+    return (
+      <SafeAreaView
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}>
+        <Text style={{ fontSize: 32 }}>🏆 Hai vinto</Text>
+
+        <TouchableOpacity
+          onPress={() => setSchermata('home')}
+          style={{ marginTop: 20 }}>
+          <Text>Gioca ancora</Text>
         </TouchableOpacity>
       </SafeAreaView>
     );
