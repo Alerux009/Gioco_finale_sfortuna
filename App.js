@@ -1,5 +1,11 @@
 import React, { useState } from 'react';
-import { SafeAreaView, View, Text, TouchableOpacity } from 'react-native';
+import {
+  SafeAreaView,
+  View,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+} from 'react-native';
 
 export default function App() {
   const [schermata, setSchermata] = useState('home');
@@ -9,6 +15,7 @@ export default function App() {
   const [idUsati, setIdUsati] = useState([]);
   const [posScelta, setPosScelta] = useState(null);
   const [mostraSfiga, setMostraSfiga] = useState(false);
+  const [messaggio, setMessaggio] = useState('');
 
   function inizia() {
     const start = prendiCarte([], 3);
@@ -33,7 +40,7 @@ export default function App() {
       const nuovaMano = [...mano, cartaCorrente].sort(
         (a, b) => a.sfiga - b.sfiga
       );
-
+      setMessaggio('');
       setMano(nuovaMano);
       const [nuova] = prendiCarte(idUsati, 1);
 
@@ -50,7 +57,7 @@ export default function App() {
       setMostraSfiga(false);
       setErrori(nuoviErrori);
 
-      alert(`Sbagliato!\n\nLa sfiga era ${cartaCorrente.sfiga}`);
+      setMessaggio(` Sbagliato! La sfiga era ${cartaCorrente.sfiga}`);
       setMostraSfiga(true);
 
       if (nuoviErrori >= 3) {
@@ -67,32 +74,34 @@ export default function App() {
           justifyContent: 'center',
           padding: 20,
         }}>
-        <Text
-          style={{
-            fontSize: 32,
-            textAlign: 'center',
-            marginBottom: 30,
-            fontWeight: 'bold',
-          }}>
-          Gioco della Sfortuna
-        </Text>
-
-        <TouchableOpacity
-          onPress={inizia}
-          style={{
-            backgroundColor: 'black',
-            padding: 20,
-            borderRadius: 12,
-          }}>
+        <ScrollView>
           <Text
             style={{
-              color: 'white',
+              fontSize: 32,
               textAlign: 'center',
-              fontSize: 18,
+              marginBottom: 30,
+              fontWeight: 'bold',
             }}>
-            Inizia
+            Gioco della Sfortuna
           </Text>
-        </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={inizia}
+            style={{
+              backgroundColor: 'black',
+              padding: 20,
+              borderRadius: 12,
+            }}>
+            <Text
+              style={{
+                color: 'white',
+                textAlign: 'center',
+                fontSize: 18,
+              }}>
+              Inizia
+            </Text>
+          </TouchableOpacity>
+        </ScrollView>
       </SafeAreaView>
     );
   }
@@ -103,115 +112,142 @@ export default function App() {
         style={{
           flex: 1,
         }}>
-        <View style={{ padding: 20 }}>
-          <Text style={{ fontSize: 20, fontWeight: 'bold' }}>
-            Carte: {mano.length}
-          </Text>
-
-          <Text>Errori: {errori}</Text>
-        </View>
-
-        {cartaCorrente && (
+        <ScrollView>
           <View style={{ padding: 20 }}>
-            <Text style={{ fontSize: 50 }}>{cartaCorrente.emoji}</Text>
-
-            <Text style={{ fontSize: 22, fontWeight: 'bold' }}>
-              {cartaCorrente.nome}
-            </Text>
-
-            <Text>Sfiga: {mostraSfiga ? cartaCorrente.sfiga : '???'}</Text>
             <Text
               style={{
-                marginTop: 10,
-                fontSize: 16,
+                fontSize: 20,
+                fontWeight: 'bold',
+                color: 'white',
               }}>
-              {cartaCorrente.desc}
+              Carte: {mano.length}
             </Text>
-          </View>
-        )}
 
-        <View style={{ paddingHorizontal: 20 }}>
-          {mano.map((carta, index) => (
-            <View key={carta.id}>
-              {/* Pulsante inserimento */}
-              <TouchableOpacity
-                onPress={() => setPosScelta(index)}
-                style={{
-                  backgroundColor:
-                    posScelta === index ? 'gray' : 'darkslategray',
-                  padding: 10,
-                  borderRadius: 10,
-                  marginBottom: 8,
-                  alignItems: 'center',
-                }}>
-                <Text style={{ color: 'white' }}>Inserisci qui</Text>
-              </TouchableOpacity>
+            <Text style={{ color: 'white' }}>Errori: {errori}</Text>
 
-              {/* Carta */}
+            {messaggio !== '' && (
               <View
                 style={{
-                  padding: 16,
-                  marginBottom: 12,
-                  backgroundColor: 'darkslategray',
-                  borderRadius: 14,
-                  borderWidth: 2,
-                  borderColor: 'gray',
+                  backgroundColor: 'darkred',
+                  padding: 14,
+                  borderRadius: 12,
+                  marginTop: 15,
                 }}>
                 <Text
                   style={{
                     color: 'white',
-                    fontSize: 18,
+                    textAlign: 'center',
                     fontWeight: 'bold',
                   }}>
-                  {carta.emoji} {carta.nome}
-                </Text>
-
-                <Text
-                  style={{
-                    color: 'lightgray',
-                    marginTop: 6,
-                    fontSize: 14,
-                  }}>
-                  {carta.desc}
+                  {messaggio}
                 </Text>
               </View>
+            )}
+          </View>
+
+          {cartaCorrente && (
+            <View style={{ padding: 20 }}>
+              <Text style={{ fontSize: 50 }}>{cartaCorrente.emoji}</Text>
+
+              <Text style={{ fontSize: 22, fontWeight: 'bold' }}>
+                {cartaCorrente.nome}
+              </Text>
+
+              <Text>Sfiga: {mostraSfiga ? cartaCorrente.sfiga : '???'}</Text>
+              <Text
+                style={{
+                  marginTop: 10,
+                  fontSize: 16,
+                }}>
+                {cartaCorrente.desc}
+              </Text>
             </View>
-          ))}
+          )}
 
-          {/* Pulsante finale */}
-          <TouchableOpacity
-            onPress={() => setPosScelta(mano.length)}
+          <View style={{ paddingHorizontal: 20 }}>
+            {mano.map((carta, index) => (
+              <View key={carta.id}>
+                {/* Pulsante inserimento */}
+                <TouchableOpacity
+                  onPress={() => setPosScelta(index)}
+                  style={{
+                    backgroundColor:
+                      posScelta === index ? 'gray' : 'darkslategray',
+                    padding: 10,
+                    borderRadius: 10,
+                    marginBottom: 8,
+                    alignItems: 'center',
+                  }}>
+                  <Text style={{ color: 'white' }}>Inserisci qui</Text>
+                </TouchableOpacity>
+
+                {/* Carta */}
+                <View
+                  style={{
+                    padding: 16,
+                    marginBottom: 12,
+                    backgroundColor: 'darkslategray',
+                    borderRadius: 14,
+                    borderWidth: 2,
+                    borderColor: 'gray',
+                  }}>
+                  <Text
+                    style={{
+                      color: 'white',
+                      fontSize: 18,
+                      fontWeight: 'bold',
+                    }}>
+                    {carta.emoji} {carta.nome}
+                  </Text>
+
+                  <Text
+                    style={{
+                      color: 'lightgray',
+                      marginTop: 6,
+                      fontSize: 14,
+                    }}>
+                    {carta.desc}
+                  </Text>
+                </View>
+              </View>
+            ))}
+
+            <TouchableOpacity
+              onPress={() => setPosScelta(mano.length)}
+              style={{
+                backgroundColor:
+                  posScelta === mano.length ? 'gray' : 'darkslategray',
+                padding: 14,
+                borderRadius: 10,
+                alignItems: 'center',
+                marginTop: 4,
+              }}>
+              <Text style={{ color: 'white' }}>Inserisci alla fine</Text>
+            </TouchableOpacity>
+          </View>
+
+          <Text
             style={{
-              backgroundColor:
-                posScelta === mano.length ? 'gray' : 'darkslategray',
-              padding: 14,
-              borderRadius: 10,
-              alignItems: 'center',
-              marginTop: 4,
+              textAlign: 'center',
+              marginTop: 20,
+              fontSize: 18,
             }}>
-            <Text style={{ color: 'white' }}>Inserisci alla fine</Text>
+            Posizione scelta: {posScelta !== null ? posScelta + 1 : '-'}
+          </Text>
+
+          <TouchableOpacity
+            onPress={conferma}
+            style={{
+              backgroundColor: 'royalblue',
+              borderRadius: 14,
+              padding: 20,
+              margin: 20,
+            }}>
+            <Text style={{ color: 'white', textAlign: 'center' }}>
+              Conferma
+            </Text>
           </TouchableOpacity>
-        </View>
-
-        <Text
-          style={{
-            textAlign: 'center',
-            marginTop: 20,
-            fontSize: 18,
-          }}>
-          Posizione scelta: {posScelta !== null ? posScelta + 1 : '-'}
-        </Text>
-
-        <TouchableOpacity
-          onPress={conferma}
-          style={{
-            backgroundColor: 'royalblue',
-            borderRadius: 14,
-            padding: 20,
-            margin: 20,
-          }}>
-          <Text style={{ color: 'white', textAlign: 'center' }}>Conferma</Text>
-        </TouchableOpacity>
+        </ScrollView>
       </SafeAreaView>
     );
   }
