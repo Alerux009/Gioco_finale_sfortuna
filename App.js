@@ -132,34 +132,66 @@ export default function App() {
 
         <View style={{ paddingHorizontal: 20 }}>
           {mano.map((carta, index) => (
-            <TouchableOpacity
-              key={carta.id}
-              onPress={() => setPosScelta(index)}
-              style={{
-                padding: 15,
-                marginBottom: 10,
-                backgroundColor: posScelta === index ? 'black' : '#222',
-                borderRadius: 10,
-              }}>
-              <Text style={{ color: 'white', fontSize: 18 }}>
-                {carta.emoji} {carta.nome}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </View>
+            <View key={carta.id}>
+              {/* Pulsante inserimento */}
+              <TouchableOpacity
+                onPress={() => setPosScelta(index)}
+                style={{
+                  backgroundColor:
+                    posScelta === index ? 'gray' : 'darkslategray',
+                  padding: 10,
+                  borderRadius: 10,
+                  marginBottom: 8,
+                  alignItems: 'center',
+                }}>
+                <Text style={{ color: 'white' }}>Inserisci qui</Text>
+              </TouchableOpacity>
 
-        <TouchableOpacity
-          onPress={() => setPosScelta(mano.length)}
-          style={{
-            padding: 15,
-            marginHorizontal: 20,
-            backgroundColor: posScelta === mano.length ? '#444' : '#222',
-            borderRadius: 10,
-          }}>
-          <Text style={{ color: 'white', textAlign: 'center' }}>
-            Inserisci alla fine
-          </Text>
-        </TouchableOpacity>
+              {/* Carta */}
+              <View
+                style={{
+                  padding: 16,
+                  marginBottom: 12,
+                  backgroundColor: 'darkslategray',
+                  borderRadius: 14,
+                  borderWidth: 2,
+                  borderColor: 'gray',
+                }}>
+                <Text
+                  style={{
+                    color: 'white',
+                    fontSize: 18,
+                    fontWeight: 'bold',
+                  }}>
+                  {carta.emoji} {carta.nome}
+                </Text>
+
+                <Text
+                  style={{
+                    color: 'lightgray',
+                    marginTop: 6,
+                    fontSize: 14,
+                  }}>
+                  {carta.desc}
+                </Text>
+              </View>
+            </View>
+          ))}
+
+          {/* Pulsante finale */}
+          <TouchableOpacity
+            onPress={() => setPosScelta(mano.length)}
+            style={{
+              backgroundColor:
+                posScelta === mano.length ? 'gray' : 'darkslategray',
+              padding: 14,
+              borderRadius: 10,
+              alignItems: 'center',
+              marginTop: 4,
+            }}>
+            <Text style={{ color: 'white' }}>Inserisci alla fine</Text>
+          </TouchableOpacity>
+        </View>
 
         <Text
           style={{
@@ -173,7 +205,8 @@ export default function App() {
         <TouchableOpacity
           onPress={conferma}
           style={{
-            backgroundColor: 'black',
+            backgroundColor: 'royalblue',
+            borderRadius: 14,
             padding: 20,
             margin: 20,
           }}>
