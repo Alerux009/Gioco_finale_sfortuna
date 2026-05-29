@@ -7,10 +7,6 @@ import {
   ScrollView,
 } from 'react-native';
 
-const dbsm_temp = {
-  gioco: 'Gioco della Sfortuna',
-};
-
 export default function App() {
   const [schermata, setSchermata] = useState('home');
   const [mano, setMano] = useState([]);
@@ -47,7 +43,7 @@ export default function App() {
 
   function conferma() {
     if (posScelta === null) {
-      setMessaggio('⚠️ Seleziona una posizione');
+      setMessaggio(' Seleziona una posizione');
       return;
     }
 
@@ -68,7 +64,7 @@ export default function App() {
         (a, b) => a.sfiga - b.sfiga
       );
 
-      setMessaggio('✅ Posizione corretta');
+      setMessaggio(' Posizione corretta');
 
       setMostraSfiga(true);
 
@@ -83,7 +79,7 @@ export default function App() {
 
       setErrori(nuoviErrori);
 
-      setMessaggio(`❌ Sbagliato! Sfiga: ${cartaCorrente.sfiga}`);
+      setMessaggio(` Sbagliato! Sfiga: ${cartaCorrente.sfiga}`);
 
       setMostraSfiga(true);
 
@@ -93,7 +89,7 @@ export default function App() {
       }
     }
 
-    // CAMBIA SEMPRE CARTA
+  
     const [prossima] = prendiCarte([...idUsati, cartaCorrente.id], 1);
 
     if (prossima) {
@@ -114,20 +110,52 @@ export default function App() {
       <SafeAreaView
         style={{
           flex: 1,
-          justifyContent: 'center',
-          padding: 20,
           backgroundColor: 'aliceblue',
         }}>
-        <ScrollView>
+        <View
+          style={{
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+            padding: 30,
+          }}>
+          <Text
+            style={{
+              fontSize: 50,
+              marginBottom: 10,
+            }}></Text>
+
           <Text
             style={{
               fontSize: 34,
               textAlign: 'center',
-              marginBottom: 40,
               fontWeight: 'bold',
               color: 'midnightblue',
             }}>
-            Gioco della Sfortuna
+            Gioco della
+          </Text>
+
+          <Text
+            style={{
+              fontSize: 40,
+              textAlign: 'center',
+              fontWeight: 'bold',
+              color: 'deepskyblue',
+              marginBottom: 20,
+            }}>
+            Sfortuna
+          </Text>
+
+          <Text
+            style={{
+              textAlign: 'center',
+              fontSize: 16,
+              color: 'slategray',
+              marginBottom: 50,
+              lineHeight: 24,
+            }}>
+            Indovina la posizione corretta delle carte in base al livello di
+            sfiga.
           </Text>
 
           <TouchableOpacity
@@ -135,7 +163,8 @@ export default function App() {
             style={{
               backgroundColor: 'deepskyblue',
               padding: 20,
-              borderRadius: 16,
+              borderRadius: 20,
+              width: '85%',
             }}>
             <Text
               style={{
@@ -144,10 +173,29 @@ export default function App() {
                 fontSize: 20,
                 fontWeight: 'bold',
               }}>
-              Inizia
+              Inizia Partita
             </Text>
           </TouchableOpacity>
-        </ScrollView>
+
+          <View
+            style={{
+              marginTop: 40,
+              backgroundColor: 'white',
+              padding: 18,
+              borderRadius: 18,
+              width: '100%',
+            }}>
+            <Text
+              style={{
+                textAlign: 'center',
+                color: 'gray',
+                lineHeight: 22,
+              }}>
+              Vinci con 6 carte{'\n'}
+              Perdi con 3 errori
+            </Text>
+          </View>
+        </View>
       </SafeAreaView>
     );
   }
@@ -375,7 +423,7 @@ export default function App() {
             color: 'crimson',
             fontWeight: 'bold',
           }}>
-          💀 Hai perso
+          Hai perso
         </Text>
 
         <TouchableOpacity
@@ -413,7 +461,7 @@ export default function App() {
             color: 'green',
             fontWeight: 'bold',
           }}>
-          🏆 Hai vinto
+          Hai vinto
         </Text>
 
         <TouchableOpacity
