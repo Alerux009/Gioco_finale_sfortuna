@@ -5,15 +5,33 @@
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "doc": "jsdoc -c nome.json"
+    
   },
   "dependencies": {
+    "@expo/vector-icons": "^15.0.3",
     "expo": "~54.0.34",
     "expo-status-bar": "~3.0.9",
     "react": "19.1.0",
     "react-native": "0.81.5",
-    "@expo/vector-icons": "^15.0.3",
     "react-native-paper": "4.9.2"
   },
-  "private": true
+  "private": true,
+  "name": "gioco_finale_sfortuna",
+  "version": "1.0.0",
+  "description": "Open the `App.js` file to start writing some code. You can preview the changes directly on your phone or tablet by scanning the **QR code** or use the iOS or Android emulators. When you're done, click **Save** and share the link!",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Alerux009/Gioco_finale_sfortuna.git"
+  },
+  "keywords": [],
+  "author": "",
+  "bugs": {
+    "url": "https://github.com/Alerux009/Gioco_finale_sfortuna/issues"
+  },
+  "homepage": "https://github.com/Alerux009/Gioco_finale_sfortuna#readme",
+  "devDependencies": {
+    "jsdoc": "^4.0.5"
+  }
 }
