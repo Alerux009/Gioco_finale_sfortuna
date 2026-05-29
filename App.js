@@ -7,6 +7,10 @@ import {
   ScrollView,
 } from 'react-native';
 
+const dbsm_temp = {
+  gioco: 'Gioco della Sfortuna',
+};
+
 export default function App() {
   const [schermata, setSchermata] = useState('home');
   const [mano, setMano] = useState([]);
@@ -19,50 +23,89 @@ export default function App() {
 
   function inizia() {
     const start = prendiCarte([], 3);
+
     const ids = start.map((c) => c.id);
 
     const [nuova] = prendiCarte(ids, 1);
 
     setMano(start.sort((a, b) => a.sfiga - b.sfiga));
+
     setIdUsati([...ids, nuova.id]);
+
     setCartaCorrente(nuova);
+
     setErrori(0);
+
     setPosScelta(null);
+
     setSchermata('gioco');
+
     setMostraSfiga(false);
+
+    setMessaggio('');
   }
 
   function conferma() {
-    const ok =
-      posScelta !== null && posizioneCorretta(mano, cartaCorrente, posScelta);
+    if (posScelta === null) {
+      setMessaggio('⚠️ Seleziona una posizione');
+      return;
+    }
+
+    const nuova = [...mano];
+
+    nuova.splice(posScelta, 0, cartaCorrente);
+
+    let ok = true;
+
+    for (let i = 0; i < nuova.length - 1; i++) {
+      if (nuova[i].sfiga > nuova[i + 1].sfiga) {
+        ok = false;
+      }
+    }
 
     if (ok) {
       const nuovaMano = [...mano, cartaCorrente].sort(
         (a, b) => a.sfiga - b.sfiga
       );
-      setMessaggio('');
+
+      setMessaggio('✅ Posizione corretta');
+
+      setMostraSfiga(true);
+
       setMano(nuovaMano);
-      const [nuova] = prendiCarte(idUsati, 1);
 
-      if (nuova) {
-        setCartaCorrente(nuova);
-        setPosScelta(null);
-
-        setIdUsati([...idUsati, nuova.id]);
-      } else {
+      if (nuovaMano.length >= 6) {
         setSchermata('vittoria');
+        return;
       }
     } else {
       const nuoviErrori = errori + 1;
-      setMostraSfiga(false);
+
       setErrori(nuoviErrori);
 
-      setMessaggio(` Sbagliato! La sfiga era ${cartaCorrente.sfiga}`);
+      setMessaggio(`❌ Sbagliato! Sfiga: ${cartaCorrente.sfiga}`);
+
       setMostraSfiga(true);
 
       if (nuoviErrori >= 3) {
         setSchermata('fine');
+        return;
       }
+    }
+
+    // CAMBIA SEMPRE CARTA
+    const [prossima] = prendiCarte([...idUsati, cartaCorrente.id], 1);
+
+    if (prossima) {
+      setCartaCorrente(prossima);
+
+      setIdUsati((prev) => [...prev, cartaCorrente.id, prossima.id]);
+
+      setPosScelta(null);
+
+      setMostraSfiga(false);
+    } else {
+      setSchermata('vittoria');
     }
   }
 
@@ -73,14 +116,16 @@ export default function App() {
           flex: 1,
           justifyContent: 'center',
           padding: 20,
+          backgroundColor: 'aliceblue',
         }}>
         <ScrollView>
           <Text
             style={{
-              fontSize: 32,
+              fontSize: 34,
               textAlign: 'center',
-              marginBottom: 30,
+              marginBottom: 40,
               fontWeight: 'bold',
+              color: 'midnightblue',
             }}>
             Gioco della Sfortuna
           </Text>
@@ -88,15 +133,16 @@ export default function App() {
           <TouchableOpacity
             onPress={inizia}
             style={{
-              backgroundColor: 'black',
+              backgroundColor: 'deepskyblue',
               padding: 20,
-              borderRadius: 12,
+              borderRadius: 16,
             }}>
             <Text
               style={{
                 color: 'white',
                 textAlign: 'center',
-                fontSize: 18,
+                fontSize: 20,
+                fontWeight: 'bold',
               }}>
               Inizia
             </Text>
@@ -111,31 +157,39 @@ export default function App() {
       <SafeAreaView
         style={{
           flex: 1,
+          backgroundColor: 'aliceblue',
         }}>
         <ScrollView>
           <View style={{ padding: 20 }}>
             <Text
               style={{
-                fontSize: 20,
+                fontSize: 22,
                 fontWeight: 'bold',
-                color: 'white',
+                color: 'midnightblue',
               }}>
-              Carte: {mano.length}
+              Carte: {mano.length}/6
             </Text>
 
-            <Text style={{ color: 'white' }}>Errori: {errori}</Text>
+            <Text
+              style={{
+                color: 'crimson',
+                marginTop: 6,
+                fontWeight: 'bold',
+              }}>
+              Errori: {errori}/3
+            </Text>
 
             {messaggio !== '' && (
               <View
                 style={{
-                  backgroundColor: 'darkred',
+                  backgroundColor: 'white',
                   padding: 14,
-                  borderRadius: 12,
+                  borderRadius: 14,
                   marginTop: 15,
                 }}>
                 <Text
                   style={{
-                    color: 'white',
+                    color: 'black',
                     textAlign: 'center',
                     fontWeight: 'bold',
                   }}>
@@ -146,54 +200,86 @@ export default function App() {
           </View>
 
           {cartaCorrente && (
-            <View style={{ padding: 20 }}>
-              <Text style={{ fontSize: 50 }}>{cartaCorrente.emoji}</Text>
+            <View
+              style={{
+                padding: 20,
+                marginHorizontal: 20,
+                backgroundColor: 'white',
+                borderRadius: 20,
+              }}>
+              <Text
+                style={{
+                  fontSize: 60,
+                  textAlign: 'center',
+                }}>
+                {cartaCorrente.emoji}
+              </Text>
 
-              <Text style={{ fontSize: 22, fontWeight: 'bold' }}>
+              <Text
+                style={{
+                  fontSize: 24,
+                  fontWeight: 'bold',
+                  textAlign: 'center',
+                  color: 'midnightblue',
+                  marginTop: 10,
+                }}>
                 {cartaCorrente.nome}
               </Text>
 
-              <Text>Sfiga: {mostraSfiga ? cartaCorrente.sfiga : '???'}</Text>
+              <Text
+                style={{
+                  textAlign: 'center',
+                  marginTop: 10,
+                  color: 'darkorange',
+                  fontSize: 18,
+                  fontWeight: 'bold',
+                }}>
+                Sfiga: {mostraSfiga ? cartaCorrente.sfiga : '???'}
+              </Text>
+
               <Text
                 style={{
                   marginTop: 10,
                   fontSize: 16,
+                  color: 'gray',
+                  textAlign: 'center',
                 }}>
                 {cartaCorrente.desc}
               </Text>
             </View>
           )}
 
-          <View style={{ paddingHorizontal: 20 }}>
+          <View style={{ paddingHorizontal: 20, marginTop: 20 }}>
             {mano.map((carta, index) => (
               <View key={carta.id}>
-                {/* Pulsante inserimento */}
                 <TouchableOpacity
                   onPress={() => setPosScelta(index)}
                   style={{
                     backgroundColor:
-                      posScelta === index ? 'gray' : 'darkslategray',
-                    padding: 10,
-                    borderRadius: 10,
+                      posScelta === index ? 'skyblue' : 'lightblue',
+                    padding: 12,
+                    borderRadius: 12,
                     marginBottom: 8,
                     alignItems: 'center',
                   }}>
-                  <Text style={{ color: 'white' }}>Inserisci qui</Text>
+                  <Text
+                    style={{
+                      fontWeight: 'bold',
+                    }}>
+                    Inserisci qui
+                  </Text>
                 </TouchableOpacity>
 
-                {/* Carta */}
                 <View
                   style={{
                     padding: 16,
                     marginBottom: 12,
-                    backgroundColor: 'darkslategray',
-                    borderRadius: 14,
-                    borderWidth: 2,
-                    borderColor: 'gray',
+                    backgroundColor: 'white',
+                    borderRadius: 18,
                   }}>
                   <Text
                     style={{
-                      color: 'white',
+                      color: 'midnightblue',
                       fontSize: 18,
                       fontWeight: 'bold',
                     }}>
@@ -202,11 +288,20 @@ export default function App() {
 
                   <Text
                     style={{
-                      color: 'lightgray',
+                      color: 'gray',
                       marginTop: 6,
                       fontSize: 14,
                     }}>
                     {carta.desc}
+                  </Text>
+
+                  <Text
+                    style={{
+                      color: 'darkorange',
+                      marginTop: 8,
+                      fontWeight: 'bold',
+                    }}>
+                    Sfiga: {carta.sfiga}
                   </Text>
                 </View>
               </View>
@@ -216,13 +311,18 @@ export default function App() {
               onPress={() => setPosScelta(mano.length)}
               style={{
                 backgroundColor:
-                  posScelta === mano.length ? 'gray' : 'darkslategray',
+                  posScelta === mano.length ? 'skyblue' : 'lightblue',
                 padding: 14,
-                borderRadius: 10,
+                borderRadius: 12,
                 alignItems: 'center',
                 marginTop: 4,
               }}>
-              <Text style={{ color: 'white' }}>Inserisci alla fine</Text>
+              <Text
+                style={{
+                  fontWeight: 'bold',
+                }}>
+                Inserisci alla fine
+              </Text>
             </TouchableOpacity>
           </View>
 
@@ -231,6 +331,8 @@ export default function App() {
               textAlign: 'center',
               marginTop: 20,
               fontSize: 18,
+              color: 'midnightblue',
+              fontWeight: 'bold',
             }}>
             Posizione scelta: {posScelta !== null ? posScelta + 1 : '-'}
           </Text>
@@ -238,12 +340,18 @@ export default function App() {
           <TouchableOpacity
             onPress={conferma}
             style={{
-              backgroundColor: 'royalblue',
-              borderRadius: 14,
+              backgroundColor: 'deepskyblue',
+              borderRadius: 18,
               padding: 20,
               margin: 20,
             }}>
-            <Text style={{ color: 'white', textAlign: 'center' }}>
+            <Text
+              style={{
+                color: 'white',
+                textAlign: 'center',
+                fontWeight: 'bold',
+                fontSize: 18,
+              }}>
               Conferma
             </Text>
           </TouchableOpacity>
@@ -255,13 +363,36 @@ export default function App() {
   if (schermata === 'fine') {
     return (
       <SafeAreaView
-        style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <Text style={{ fontSize: 30 }}>💀 Hai perso</Text>
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: 'aliceblue',
+        }}>
+        <Text
+          style={{
+            fontSize: 34,
+            color: 'crimson',
+            fontWeight: 'bold',
+          }}>
+          💀 Hai perso
+        </Text>
 
         <TouchableOpacity
           onPress={() => setSchermata('home')}
-          style={{ marginTop: 20 }}>
-          <Text>Ricomincia</Text>
+          style={{
+            marginTop: 20,
+            backgroundColor: 'deepskyblue',
+            padding: 16,
+            borderRadius: 12,
+          }}>
+          <Text
+            style={{
+              color: 'white',
+              fontWeight: 'bold',
+            }}>
+            Ricomincia
+          </Text>
         </TouchableOpacity>
       </SafeAreaView>
     );
@@ -274,13 +405,32 @@ export default function App() {
           flex: 1,
           justifyContent: 'center',
           alignItems: 'center',
+          backgroundColor: 'aliceblue',
         }}>
-        <Text style={{ fontSize: 32 }}>🏆 Hai vinto</Text>
+        <Text
+          style={{
+            fontSize: 34,
+            color: 'green',
+            fontWeight: 'bold',
+          }}>
+          🏆 Hai vinto
+        </Text>
 
         <TouchableOpacity
           onPress={() => setSchermata('home')}
-          style={{ marginTop: 20 }}>
-          <Text>Gioca ancora</Text>
+          style={{
+            marginTop: 20,
+            backgroundColor: 'deepskyblue',
+            padding: 16,
+            borderRadius: 12,
+          }}>
+          <Text
+            style={{
+              color: 'white',
+              fontWeight: 'bold',
+            }}>
+            Gioca ancora
+          </Text>
         </TouchableOpacity>
       </SafeAreaView>
     );
@@ -644,19 +794,22 @@ const CARTE = [
 
 function prendiCarte(idUsati, quante) {
   const disponibili = CARTE.filter((c) => !idUsati.includes(c.id));
-  const mescolate = disponibili.sort(() => Math.random() - 0.5);
+
+  const mescolate = [...disponibili].sort(() => Math.random() - 0.5);
+
   return mescolate.slice(0, quante);
 }
 
 function posizioneCorretta(mano, cartaNuova, posizione) {
   const nuova = [...mano];
+
   nuova.splice(posizione, 0, cartaNuova);
 
-  const i = nuova.indexOf(cartaNuova);
+  for (let i = 0; i < nuova.length - 1; i++) {
+    if (nuova[i].sfiga > nuova[i + 1].sfiga) {
+      return false;
+    }
+  }
 
-  const primaOk = i === 0 || nuova[i - 1].sfiga < cartaNuova.sfiga;
-  const dopoOk =
-    i === nuova.length - 1 || nuova[i + 1].sfiga > cartaNuova.sfiga;
-
-  return primaOk && dopoOk;
+  return true;
 }
